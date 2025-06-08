@@ -10,6 +10,7 @@ class ResellerBase(BaseModel):
     promotion_details: Optional[str] = None
     oauth_provider: Optional[str] = None
     oauth_user_id: Optional[str] = None
+    is_active: bool = True  # Add is_active here, defaulting to True
     is_superuser: bool = False
 
 class ResellerCreate(ResellerBase):

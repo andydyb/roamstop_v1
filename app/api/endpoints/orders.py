@@ -12,10 +12,18 @@ from app.schemas.order import (
 )
 # from app.models.product import ProductPackage # Not directly needed if using CRUD
 from app.models.reseller import ResellerProfile # For type hinting current_user
+# from app.schemas.order import OrderStatus # If defined as Enum
+from app.core.commissions_calculator import calculate_and_record_commissions
+from app.crud import crud_commission # Added import for crud_commission
 from app.db.session import get_db
 from app.core.dependencies import get_current_active_user, get_current_active_superuser
+import logging # For logging
 
 router = APIRouter()
+logger = logging.getLogger(__name__) # For logging within the endpoint
+
+# Define order status constants if not using an Enum yet
+ORDER_STATUS_COMPLETED = "COMPLETED"
 
 @router.post("/", response_model=Order, status_code=201)
 async def create_new_order(
@@ -106,7 +114,25 @@ async def update_existing_order_status( # Renamed for clarity, as OrderUpdate is
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    return crud_order.update_order(db=db, db_obj=db_order, obj_in=order_in)
+    old_status = db_order.order_status
+    updated_order = crud_order.update_order(db=db, db_obj=db_order, obj_in=order_in)
+    new_status = updated_order.order_status
+
+    status_changed_to_completed = False
+    if order_in.order_status and new_status == ORDER_STATUS_COMPLETED and old_status != ORDER_STATUS_COMPLETED:
+        status_changed_to_completed = True
+
+    if status_changed_to_completed:
+        # Check if commissions have already been calculated for this order to prevent duplicates
+        existing_commissions = crud_commission.get_commissions_by_order_id(db=db, order_id=updated_order.id)
+        if not existing_commissions:
+            logger.info(f"Order ID: {updated_order.id} status changed to COMPLETED. Calculating commissions.")
+            await calculate_and_record_commissions(db=db, order=updated_order)
+            # db.refresh(updated_order) # Refresh if calculate_and_record_commissions changes the order itself directly
+        else:
+            logger.info(f"Commissions for order ID: {updated_order.id} already exist. Skipping recalculation.")
+
+    return updated_order
 
 # Admin specific endpoints
 @router.get("/admin/by-reseller/{reseller_id}", response_model=List[Order], tags=["Admin Orders"])

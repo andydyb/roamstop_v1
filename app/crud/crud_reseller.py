@@ -24,8 +24,8 @@ def create_reseller(db: Session, *, obj_in: ResellerCreate) -> ResellerProfile:
         promotion_details=obj_in.promotion_details,
         oauth_provider=obj_in.oauth_provider,
         oauth_user_id=obj_in.oauth_user_id,
-        is_active=True, # Default to active on creation
-        is_superuser=obj_in.is_superuser # Handle is_superuser from schema
+        is_active=obj_in.is_active, # Use is_active from schema
+        is_superuser=obj_in.is_superuser
     )
     db.add(db_obj)
     db.commit()

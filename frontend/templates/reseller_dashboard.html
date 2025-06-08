@@ -65,6 +65,33 @@
         <div id="promotion-update-message" style="margin-top: 10px;"></div>
     </section>
 
+    <section id="commissions-overview">
+        <h2>Commissions</h2>
+        <div>
+            <p>Total Unpaid Commissions (USD): <span id="total-unpaid-commissions">Loading...</span></p>
+            <small>(Note: This is a sum of 'UNPAID' and 'READY_FOR_PAYOUT' commissions. Calculation is client-side for this demo.)</small>
+        </div>
+    </section>
+
+    <section id="recent-commissions">
+        <h2>Recent Commission Records</h2>
+        <div id="commissions-list-container">
+            <p>Loading commission records...</p>
+            <!-- Commissions will be listed here -->
+        </div>
+        <div>
+            <label for="commission-status-filter">Filter by status:</label>
+            <select id="commission-status-filter">
+                <option value="">All</option>
+                <option value="PENDING_VALIDATION">Pending Validation</option>
+                <option value="UNPAID">Unpaid</option>
+                <option value="READY_FOR_PAYOUT">Ready for Payout</option>
+                <option value="PAID">Paid</option>
+                <option value="CANCELLED">Cancelled</option>
+            </select>
+        </div>
+    </section>
+
 </div>
 {% endblock %}
 

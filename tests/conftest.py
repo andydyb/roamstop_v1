@@ -189,3 +189,16 @@ def test_product(db_session: Session) -> ProductPackageModel:
         is_active=True
     )
     return crud_product.create_product(db=db_session, obj_in=product_in)
+
+# Helper function to create a recruited reseller
+def create_recruited_reseller(db: Session, recruiter: ResellerModel) -> ResellerModel:
+    email = f"recruited_{uuid.uuid4().hex[:6]}@example.com"
+    password = "password123" # Standard password for test users
+    reseller_in = ResellerCreate(
+        email=email,
+        password=password,
+        reseller_type="MOBILE_FIELD", # Example type
+        recruiter_id=recruiter.id,
+        is_superuser=False # Recruited users are not superusers by default
+    )
+    return crud_reseller.create_reseller(db=db, obj_in=reseller_in)

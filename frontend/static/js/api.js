@@ -172,7 +172,7 @@ async function loginReseller(email, password) {
     }
 }
 
-// --- New Authenticated API functions ---
+// --- Authenticated API functions ---
 
 /**
  * Fetches the profile of the currently logged-in reseller. (AUTH REQUIRED)
@@ -197,6 +197,38 @@ async function getResellerProfile() {
         throw error;
     }
 }
+
+/**
+ * Fetches the sales for the currently logged-in reseller. (AUTH REQUIRED)
+ * @param {string|null} status - Optional status to filter commissions by.
+ * @param {number} [skip=0] - Number of records to skip for pagination.
+ * @param {number} [limit=20] - Maximum number of records to return.
+ * @returns {Promise<Array<object>>} A promise that resolves to an array of order objects.
+ */
+async function getMyCommissions(status = null, skip = 0, limit = 20) {
+    let url = `${API_BASE_URL}/resellers/me/commissions?skip=${skip}&limit=${limit}`;
+    if (status) {
+        url += `&status=${encodeURIComponent(status)}`;
+    }
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: buildHeaders(),
+        });
+        if (response.status === 401) {
+            if (typeof window.logoutReseller === 'function') window.logoutReseller();
+            throw new Error('Unauthorized. Please login again.');
+        }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching reseller commissions:', error);
+        throw error;
+    }
+}
+
 
 /**
  * Fetches the sales for the currently logged-in reseller. (AUTH REQUIRED)
@@ -241,11 +273,8 @@ async function getResellerSalesCount() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        // Assuming the backend returns an integer directly for count,
-        // but it's safer to expect a JSON object like {"count": X}
-        // For now, let's assume it's an int, but if API returns JSON, this needs adjustment.
         const count = await response.json();
-        return { count: count }; // Wrap in an object if API returns raw int
+        return { count: count };
     } catch (error) {
         console.error('Error fetching reseller sales count:', error);
         throw error;
@@ -295,6 +324,7 @@ window.api = {
     loginReseller,
     getResellerProfile,
     getResellerSales,
-    getResellerSalesCount, // Added new function
-    updateResellerPromotionDetails
+    getResellerSalesCount,
+    updateResellerPromotionDetails,
+    getMyCommissions // Added new function
 };

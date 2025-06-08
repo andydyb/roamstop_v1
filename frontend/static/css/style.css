@@ -154,22 +154,26 @@ form button[type="submit"]:hover, button:hover {
     margin-top: 5px;
 }
 
-#sales-list-container table.sales-table {
+#sales-list-container table.sales-table,
+#commissions-list-container table.commissions-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
 }
-#sales-list-container th, #sales-list-container td {
+#sales-list-container th, #sales-list-container td,
+#commissions-list-container th, #commissions-list-container td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
 }
-#sales-list-container th {
+#sales-list-container th,
+#commissions-list-container th {
     background-color: #ecf0f1; /* Light grey for table header */
     color: #2c3e50;
     font-weight: bold;
 }
-#sales-list-container tr:nth-child(even) {
+#sales-list-container tr:nth-child(even),
+#commissions-list-container tr:nth-child(even) {
     background-color: #f9f9f9; /* Zebra striping for rows */
 }
 
@@ -226,4 +230,19 @@ form button[type="submit"]:hover, button:hover {
     color: #27ae60; /* Success text color */
     background-color: #e6ffed; /* Light green background for success */
     border-color: #c3e6cb;
+}
+
+/* Commission specific styles */
+#commissions-overview p {
+    margin: 5px 0;
+}
+#commissions-overview span {
+    font-weight: bold;
+}
+#commission-status-filter {
+    padding: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px; /* Added margin for spacing */
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }

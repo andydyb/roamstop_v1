@@ -26,6 +26,7 @@ if project_root not in sys.path:
 from app.models import reseller # Ensure ResellerProfile is loaded
 from app.models import product  # Ensure ProductPackage is loaded
 from app.models import order    # Ensure Order is loaded
+from app.models import commission # Ensure Commission is loaded
 from app.db.base_class import Base # Import your Base
 from app.core.config import SQLALCHEMY_DATABASE_URI # Import your DB URI
 
