@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Roamstop{% endblock %}
+
+{% block content %}
+<h1>Checkout</h1>
+<div id="selected-product-details">
+    <!-- Selected product details will be shown here -->
+    <p>Loading product details...</p>
+</div>
+<form id="checkout-form">
+    <div>
+        <label for="customer_email">Email:</label>
+        <input type="email" id="customer_email" name="customer_email" required>
+    </div>
+    <div>
+        <label for="customer_name">Name (Optional):</label>
+        <input type="text" id="customer_name" name="customer_name">
+    </div>
+    <input type="hidden" id="product_id_checkout" name="product_id">
+    <input type="hidden" id="reseller_id_checkout" name="reseller_id"> <!-- This might be pre-filled or dynamically set -->
+    <button type="submit">Confirm Purchase (Placeholder)</button>
+</form>
+<div id="checkout-message"></div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', path='/js/api.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/checkout.js') }}"></script> {# Assuming a checkout specific JS file #}
+{% endblock %}

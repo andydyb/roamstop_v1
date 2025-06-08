@@ -95,3 +95,13 @@ def hard_delete_product(db: Session, *, product_id: int) -> Optional[ProductPack
         db.commit()
         return db_obj
     return None
+
+def get_distinct_active_countries(db: Session) -> List[str]:
+    """
+    Get a list of distinct country codes from active product packages, ordered alphabetically.
+    """
+    query = db.query(ProductPackage.country_code)\
+              .filter(ProductPackage.is_active == True)\
+              .distinct()\
+              .order_by(ProductPackage.country_code)
+    return [row[0] for row in query.all()]

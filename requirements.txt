@@ -11,3 +11,4 @@ pytest
 httpx
 pytest-cov
 python-multipart
+jinja2

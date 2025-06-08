@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
-from app.schemas.reseller import ResellerCreate, Reseller as ResellerSchema
-from app.crud import crud_reseller
-# from app.models.reseller import ResellerProfile # Not strictly needed if CRUD handles all model interactions
+from sqlalchemy.orm import Session
+from typing import List, Optional # Added List, Optional
+
+from app.crud import crud_reseller # Changed to import specific module
+from app import schemas # Import schemas module
+from app.core import dependencies # Import dependencies module
+from app.db.session import get_db # Changed to import specific get_db
+from app.models.reseller import ResellerProfile as ResellerModel # For type hinting
 
 router = APIRouter()
 
@@ -33,3 +37,33 @@ def register_reseller(reseller_in: ResellerCreate, db: Session = Depends(get_db)
 
     new_reseller = crud_reseller.create_reseller(db=db, obj_in=reseller_in)
     return new_reseller
+
+@router.get("/me", response_model=schemas.Reseller)
+async def read_reseller_me(
+    current_user: ResellerModel = Depends(dependencies.get_current_active_user)
+):
+    """
+    Get current logged-in reseller's profile.
+    """
+    return current_user
+
+@router.put("/me/promotion-details", response_model=schemas.Reseller)
+async def update_reseller_promotion(
+    *,
+    db: Session = Depends(get_db),
+    promotion_update: schemas.ResellerPromotionUpdate,
+    current_user: ResellerModel = Depends(dependencies.get_current_active_user)
+):
+    """
+    Update promotion details for the current logged-in reseller.
+    """
+    # We construct a ResellerUpdate schema to pass to the CRUD function,
+    # ensuring only promotion_details is updated.
+    reseller_update_schema = schemas.ResellerUpdate(promotion_details=promotion_update.promotion_details)
+
+    updated_reseller = crud_reseller.update_reseller( # Corrected module access
+        db=db,
+        db_obj=current_user,
+        obj_in=reseller_update_schema
+    )
+    return updated_reseller

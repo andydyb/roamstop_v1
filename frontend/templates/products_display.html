@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}eSIM Packages - Roamstop{% endblock %}
+
+{% block content %}
+<h1>Available eSIM Packages for {{ country_code_display if country_code_display else "Selected Country" }}</h1>
+<div id="product-cards">
+    {% if products %}
+        {% for product in products %}
+        <div class="product-card">
+            <h2>{{ product.name }}</h2>
+            <p>{{ product.description if product.description else "No description available." }}</p>
+            <p>Duration: {{ product.duration_days }} days</p>
+            <p>Price: ${{ "%.2f"|format(product.price) }}</p>
+            <button class="select-package-btn" data-product-id="{{ product.id }}">Select Package</button>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No packages found for this country, or country not yet selected.</p>
+    {% endif %}
+</div>
+<p><a href="/">Back to country selection</a></p>
+{% endblock %}

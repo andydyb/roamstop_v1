@@ -48,3 +48,6 @@ class Reseller(ResellerInDBBase):
 class ResellerWithRecruits(Reseller):
     recruited_resellers: List[Reseller] = []
     # is_superuser will be available here
+
+class ResellerPromotionUpdate(BaseModel):
+    promotion_details: Optional[str] = None

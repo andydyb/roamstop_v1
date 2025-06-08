@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Roamstop{% endblock %}
+
+{% block content %}
+<h1>Welcome to Roamstop!</h1>
+<p>{{ message if message else "Find the best eSIM packages." }}</p>
+<div id="country-selection">
+    <label for="country_code_select">Select Country:</label>
+    <select id="country_code_select" name="country_code_select">
+        <option value="">Loading countries...</option>
+    </select>
+    <button id="show-packages-btn">Show Packages</button> <!-- Kept for manual trigger, or can be removed if select auto-triggers -->
+</div>
+<div id="product-list-container">
+    <!-- Products will be loaded here -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', path='/js/api.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+{% endblock %}

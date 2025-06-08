@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Reseller Dashboard - Roamstop{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h1>Reseller Dashboard</h1>
+        <p>Welcome, <span id="reseller-name-placeholder">Reseller</span>!</p>
+        <button id="logout-button">Logout</button>
+    </header>
+
+    <section id="sales-overview">
+        <h2>Sales Overview</h2>
+        <div class="overview-metrics">
+            <div>
+                <p>Total Sales (Count): <span id="total-sales-count">Loading...</span></p>
+            </div>
+            <div>
+                <p>Total Earnings (USD): <span id="total-earnings">Loading...</span></p>
+                <small>(Note: Earnings calculation is not yet implemented)</small>
+            </div>
+        </div>
+    </section>
+
+    <section id="recent-sales">
+        <h2>Recent Sales</h2>
+        <div id="sales-list-container">
+            <p>Loading recent sales...</p>
+            <!-- Sales will be listed here -->
+        </div>
+    </section>
+
+    <section id="tools-and-links">
+        <h2>Tools & Links</h2>
+        <div class="tool">
+            <h3>Your Unique QR Code</h3>
+            <div id="reseller-qr-code-container">
+                <p>(QR Code will be displayed here - Placeholder)</p>
+                <!-- Example: <img id="reseller-qr-code-img" src="" alt="Your QR Code"> -->
+            </div>
+            <p><small>This QR code links to your personalized Roamstop landing page.</small></p>
+        </div>
+        <div class="tool">
+            <h3>Recruitment Link</h3>
+            <p>Share this link to recruit new resellers:</p>
+            <input type="text" id="recruitment-link-display" readonly value="Loading your link..." style="width: 80%;">
+            <button id="copy-recruitment-link-btn">Copy Link</button>
+            <div id="recruitment-qr-code-container" style="margin-top:10px;">
+                 <p>(Recruitment QR Code will be displayed here - Placeholder)</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="promotion-details-section">
+        <h2>Promote Your Services</h2>
+        <p>Use this space to promote your other non-Roamstop activities or services on your landing page.</p>
+        <form id="promotion-details-form">
+            <div>
+                <label for="promotion-details-input">Your Promotional Content:</label>
+                <textarea id="promotion-details-input" name="promotion_details" rows="5" style="width: 100%;"></textarea>
+            </div>
+            <button type="submit">Update Promotion Content</button>
+        </form>
+        <div id="promotion-update-message" style="margin-top: 10px;"></div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }} <!-- Includes api.js from base.html -->
+        <script src="{{ url_for('static', path='/js/dashboard.js') }}"></script>
+        <!-- Inline script for logout remains as a direct way to use window.logoutReseller from auth.js -->
+        <!-- or can be fully managed within dashboard.js if preferred -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logout-button');
+                if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                        if (typeof window.logoutReseller === 'function') {
+                            window.logoutReseller();
+                        } else {
+                            // Fallback if auth.js's window.logoutReseller isn't available for some reason
+                            console.warn('window.logoutReseller not found, using fallback logout.');
+                            localStorage.removeItem('roamstop_access_token');
+                            window.location.href = '/reseller/login';
+                        }
+                });
+            }
+        });
+    </script>
+{% endblock %}

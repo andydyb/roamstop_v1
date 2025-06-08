@@ -119,3 +119,16 @@ def delete_product_package(
     # If it returns the object if found (even if already inactive), then no specific error if already inactive.
     # Based on current crud_product.delete_product, it returns the object if found.
     return deleted_product
+
+@router.get("/countries/", response_model=List[str], tags=["Products"])
+async def get_distinct_countries(db: Session = Depends(get_db)):
+    """
+    Get a list of distinct country codes from active product packages.
+    """
+    countries = crud_product.get_distinct_active_countries(db=db)
+    # if not countries:
+    #     # Depending on desired behavior, could return 404 or empty list.
+    #     # For populating a dropdown, an empty list is often preferred.
+    #     # raise HTTPException(status_code=404, detail="No active countries found")
+    #     return []
+    return countries

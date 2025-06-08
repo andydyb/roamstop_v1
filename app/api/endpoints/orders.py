@@ -2,12 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Body
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app.crud import crud_order, crud_product # crud_reseller is not directly used here
+from app.crud import crud_order, crud_product, crud_reseller # crud_reseller is needed for public endpoint
 from app.schemas.order import (
     Order,
     OrderCreate,
     OrderUpdate,
     OrderCreateInternal,
+    OrderCreatePublic, # Import the new schema
 )
 # from app.models.product import ProductPackage # Not directly needed if using CRUD
 from app.models.reseller import ResellerProfile # For type hinting current_user
@@ -59,6 +60,16 @@ async def read_my_sales(
     Retrieve sales made by the currently authenticated reseller.
     """
     return crud_order.get_orders_by_reseller(db, reseller_id=current_user.id, skip=skip, limit=limit)
+
+@router.get("/my-sales/count", response_model=int) # Simplified response model, consider dict like {"count": int}
+async def read_my_sales_count(
+    db: Session = Depends(get_db),
+    current_user: ResellerProfile = Depends(get_current_active_user)
+):
+    """
+    Retrieve the total count of sales for the currently authenticated reseller.
+    """
+    return crud_order.get_order_count_for_reseller(db, reseller_id=current_user.id)
 
 @router.get("/{order_id}", response_model=Order)
 async def read_order_details(
@@ -127,3 +138,37 @@ async def admin_read_orders_by_customer(
     Admin: Retrieve all orders for a specific customer email.
     """
     return crud_order.get_orders_by_customer(db, customer_email=customer_email, skip=skip, limit=limit)
+
+
+@router.post("/public/", response_model=Order, status_code=201, summary="Create Order (Public)")
+async def create_public_order(order_in: OrderCreatePublic, db: Session = Depends(get_db)):
+    """
+    Public endpoint to create a new order.
+    Requires reseller_id to be provided in the request body.
+    Product details (price, duration, country) are fetched from the database.
+    """
+    # Validate reseller_id
+    reseller = crud_reseller.get_reseller(db, reseller_id=order_in.reseller_id)
+    if not reseller or not reseller.is_active:
+        raise HTTPException(status_code=404, detail="Reseller not found or not active")
+
+    # Get product details to confirm price, duration, country_code
+    product = crud_product.get_product(db, product_id=order_in.product_package_id, show_inactive=False)
+    if not product: # crud_product.get_product returns None if not found or not active
+        raise HTTPException(status_code=404, detail="Product not found or not active")
+
+    # Prepare OrderCreateInternal data
+    order_internal_data = OrderCreateInternal(
+        customer_email=order_in.customer_email,
+        customer_name=order_in.customer_name,
+        product_package_id=order_in.product_package_id,
+        reseller_id=order_in.reseller_id, # From the public request
+        price_paid=product.price,
+        currency_paid="USD", # Or from product/config
+        duration_days_at_purchase=product.duration_days,
+        country_code_at_purchase=product.country_code
+        # Default status (PENDING_PAYMENT) will be set by OrderCreateInternal schema
+    )
+
+    created_order = crud_order.create_order(db=db, obj_in=order_internal_data)
+    return created_order

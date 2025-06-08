@@ -19,6 +19,9 @@ class OrderCreate(OrderBase):
     """
     pass
 
+class OrderCreatePublic(OrderCreate):
+    reseller_id: int # Explicitly require reseller_id in the public request body
+
 class OrderCreateInternal(OrderBase): # Used by CRUD operations internally
     """
     Schema for creating an order in the database, including fields derived
