@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Roamstop{% endblock %}
+
+{% block content %}
+<h1>Checkout</h1>
+<div id="selected-product-details">
+    <!-- Selected product details will be shown here -->
+    <p>Loading product details...</p>
+</div>
+<form id="checkout-form">
+    <div>
+        <label for="customer_email">Email:</label>
+        <input type="email" id="customer_email" name="customer_email" required>
+    </div>
+    <div>
+        <label for="customer_name">Name (Optional):</label>
+        <input type="text" id="customer_name" name="customer_name">
+    </div>
+
+    <!-- Stripe Card Element will be inserted here -->
+    <div id="card-element-container" style="margin-bottom: 20px;">
+        <label for="card-element">Credit or debit card</label>
+        <div id="card-element" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <!-- A Stripe Element will be inserted here. -->
+        </div>
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert" style="color: red; margin-top: 10px;"></div>
+    </div>
+
+    <input type="hidden" id="product_id_checkout" name="product_id">
+    <input type="hidden" id="reseller_id_checkout" name="reseller_id">
+    <button type="submit" id="submit-payment-btn">Proceed to Payment</button>
+</form>
+<div id="checkout-message"></div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }} <!-- Includes api.js from base.html -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripePublishableKey = "{{ stripe_publishable_key }}";
+    </script>
+    <!-- main.js contains the checkout logic now, instead of a separate checkout.js -->
+    <!-- <script src="{{ url_for('static', path='/js/checkout.js') }}"></script> -->
+{% endblock %}

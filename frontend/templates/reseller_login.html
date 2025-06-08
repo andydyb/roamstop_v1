@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Reseller Login - Roamstop{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2>Reseller Login</h2>
+    <form id="reseller-login-form">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <div id="login-error-message" style="color: red; margin-top: 10px;"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {# Assuming api.js is included in base.html or will be added there #}
+    {{ super() }}
+    <script src="{{ url_for('static', path='/js/auth.js') }}"></script>
+{% endblock %}
