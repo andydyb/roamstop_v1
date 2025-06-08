@@ -172,6 +172,38 @@ async function loginReseller(email, password) {
     }
 }
 
+/**
+ * Creates a Stripe Payment Intent for a given order. (AUTH REQUIRED)
+ * This assumes the currently logged-in user (reseller) is authorized for this order.
+ * @param {number|string} orderId - The ID of the Roamstop order.
+ * @returns {Promise<object>} A promise that resolves to the payment intent object (e.g., { client_secret, order_id, payment_intent_id }).
+ */
+async function createPaymentIntent(orderId) {
+    if (!orderId) {
+        throw new Error('Order ID is required to create a payment intent.');
+    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/payments/create-payment-intent`, {
+            method: 'POST',
+            headers: buildHeaders(), // Uses Authorization header with Bearer token
+            body: JSON.stringify({ order_id: orderId }),
+        });
+        if (!response.ok) {
+            let errorDetail = `Error creating payment intent. Status: ${response.status}`;
+            try {
+                const ed = await response.json();
+                if(ed.detail) errorDetail = ed.detail;
+            } catch (e) {/* Ignore */}
+            throw new Error(errorDetail);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error creating payment intent:', error);
+        throw error;
+    }
+}
+
+
 // --- Authenticated API functions ---
 
 /**
@@ -322,9 +354,10 @@ window.api = {
     getProductDetails,
     createPublicOrder,
     loginReseller,
+    createPaymentIntent, // Added new function
     getResellerProfile,
     getResellerSales,
     getResellerSalesCount,
     updateResellerPromotionDetails,
-    getMyCommissions // Added new function
+    getMyCommissions
 };

@@ -10,9 +10,16 @@ from app.api.endpoints import resellers as resellers_api
 from app.api.endpoints import auth as auth_api
 from app.api.endpoints import products as products_api
 from app.api.endpoints import orders as orders_api
-import datetime # For current_year in base.html context example
+from app.api.endpoints import payments as payments_api
+from app.core.config import STRIPE_PUBLISHABLE_KEY # Import Stripe key
+import datetime
+import logging
 
 app = FastAPI(title="RoamStop API", version="0.1.0")
+
+# Basic logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
@@ -25,6 +32,7 @@ app.include_router(auth_api.router, prefix="/api/v1/auth", tags=["Authentication
 app.include_router(resellers_api.router, prefix="/api/v1/resellers", tags=["Resellers"])
 app.include_router(products_api.router, prefix="/api/v1/products", tags=["Products"])
 app.include_router(orders_api.router, prefix="/api/v1/orders", tags=["Orders"])
+app.include_router(payments_api.router, prefix="/api/v1/payments", tags=["Payments"]) # Include payments router
 
 @app.get("/ping", tags=["Health Check"])
 async def ping():
@@ -43,7 +51,11 @@ async def read_root(request: Request):
 
 @app.get("/checkout", response_class=HTMLResponse, tags=["Frontend"])
 async def route_checkout(request: Request):
-    return templates.TemplateResponse("checkout.html", {"request": request, "current_year": datetime.datetime.utcnow().year})
+    return templates.TemplateResponse("checkout.html", {
+        "request": request,
+        "current_year": datetime.datetime.utcnow().year,
+        "stripe_publishable_key": STRIPE_PUBLISHABLE_KEY
+    })
 
 @app.get("/order-success", response_class=HTMLResponse, tags=["Frontend"])
 async def route_order_success(request: Request):
