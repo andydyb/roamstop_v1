@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseller Dashboard - Roamstop</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <!-- More nav links can go here -->
+        </nav>
+    </header>
+    <main>
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <h1>Reseller Dashboard</h1>
+                <p>Welcome, <span id="reseller-name-placeholder">Reseller ExampleName</span>!</p>
+                <button id="logout-button">Logout</button>
+            </header>
+
+            <section id="sales-overview">
+                <h2>Sales Overview</h2>
+                <div class="overview-metrics">
+                    <div>
+                        <p>Total Sales (Count): <span id="total-sales-count">12</span></p>
+                    </div>
+                    <div>
+                        <p>Total Earnings (USD): <span id="total-earnings">$185.50</span></p>
+                        <small>(Note: Earnings calculation is not yet implemented)</small>
+                    </div>
+                </div>
+            </section>
+
+            <section id="recent-sales">
+                <h2>Recent Sales</h2>
+                <div id="sales-list-container">
+                    <div class="sale-item">
+                        <p><strong>Package:</strong> Global Data 5GB</p>
+                        <p><strong>Customer:</strong> customer1@example.com</p>
+                        <p><strong>Date:</strong> 2023-10-26</p>
+                        <p><strong>Revenue:</strong> $25.00</p>
+                    </div>
+                    <div class="sale-item">
+                        <p><strong>Package:</strong> USA Connect 10GB</p>
+                        <p><strong>Customer:</strong> visitor22@example.net</p>
+                        <p><strong>Date:</strong> 2023-10-25</p>
+                        <p><strong>Revenue:</strong> $40.00</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tools-and-links">
+                <h2>Tools & Links</h2>
+                <div class="tool">
+                    <h3>Your Unique QR Code</h3>
+                    <div id="reseller-qr-code-container">
+                        <p>(QR Code for Reseller Landing Page - e.g., image would be here)</p>
+                        <!-- Example: <img id="reseller-qr-code-img" src="path/to/example-qr.png" alt="Your QR Code"> -->
+                    </div>
+                    <p><small>This QR code links to your personalized Roamstop landing page.</small></p>
+                </div>
+                <div class="tool">
+                    <h3>Recruitment Link</h3>
+                    <p>Share this link to recruit new resellers:</p>
+                    <input type="text" id="recruitment-link-display" readonly value="https://roamstop.example.com/register?ref=reseller123" style="width: 80%;">
+                    <button id="copy-recruitment-link-btn">Copy Link</button>
+                    <div id="recruitment-qr-code-container" style="margin-top:10px;">
+                         <p>(Recruitment QR Code - e.g., image would be here)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="promotion-details-section">
+                <h2>Promote Your Services</h2>
+                <p>Use this space to promote your other non-Roamstop activities or services on your landing page.</p>
+                <form id="promotion-details-form">
+                    <div>
+                        <label for="promotion-details-input">Your Promotional Content:</label>
+                        <textarea id="promotion-details-input" name="promotion_details" rows="5" style="width: 100%;">Check out my travel blog for great tips! [Link to blog]</textarea>
+                    </div>
+                    <button type="submit">Update Promotion Content</button>
+                </form>
+                <div id="promotion-update-message" style="margin-top: 10px;">
+                    <!-- e.g., "Promotion content updated successfully!" -->
+                </div>
+            </section>
+
+            <section id="commissions-overview">
+                <h2>Commissions</h2>
+                <div>
+                    <p>Total Unpaid Commissions (USD): <span id="total-unpaid-commissions">$92.75</span></p>
+                    <small>(Note: This is a sum of 'UNPAID' and 'READY_FOR_PAYOUT' commissions.)</small>
+                </div>
+            </section>
+
+            <section id="recent-commissions">
+                <h2>Recent Commission Records</h2>
+                <div id="commissions-list-container">
+                    <div class="commission-item">
+                        <p><strong>Order ID:</strong> ORD98765</p>
+                        <p><strong>Product:</strong> Global Data 5GB</p>
+                        <p><strong>Amount:</strong> $2.50</p>
+                        <p><strong>Status:</strong> UNPAID</p>
+                        <p><strong>Date:</strong> 2023-10-26</p>
+                    </div>
+                     <div class="commission-item">
+                        <p><strong>Order ID:</strong> ORD98700</p>
+                        <p><strong>Product:</strong> USA Connect 10GB</p>
+                        <p><strong>Amount:</strong> $4.00</p>
+                        <p><strong>Status:</strong> READY_FOR_PAYOUT</p>
+                        <p><strong>Date:</strong> 2023-10-25</p>
+                    </div>
+                </div>
+                <div>
+                    <label for="commission-status-filter">Filter by status:</label>
+                    <select id="commission-status-filter">
+                        <option value="">All</option>
+                        <option value="PENDING_VALIDATION">Pending Validation</option>
+                        <option value="UNPAID">Unpaid</option>
+                        <option value="READY_FOR_PAYOUT">Ready for Payout</option>
+                        <option value="PAID">Paid</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Roamstop. All rights reserved.</p>
+    </footer>
+    <script src="../static/js/api.js"></script>
+    <script src="../static/js/auth.js"></script> <!-- Added for logout functionality -->
+    <script src="../static/js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logout-button');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    if (typeof window.logoutReseller === 'function') {
+                        window.logoutReseller();
+                    } else {
+                        console.warn('window.logoutReseller not found, using fallback logout.');
+                        localStorage.removeItem('roamstop_access_token'); // Example action
+                        window.location.href = 'reseller_login.html'; // Adjusted for static preview
+                    }
+                });
+            }
+            // Potentially other dashboard specific static preview initializations could go here
+            // For example, manually setting some text content if dashboard.js expects dynamic data
+            document.getElementById('reseller-name-placeholder').textContent = 'Jane Doe (Demo)';
+        });
+    </script>
+</body>
+</html>

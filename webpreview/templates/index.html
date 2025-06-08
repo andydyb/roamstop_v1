@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Roamstop</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <!-- More nav links can go here -->
+        </nav>
+    </header>
+    <main>
+        <h1>Welcome to Roamstop!</h1>
+        <p>Find the best eSIM packages.</p>
+        <div id="country-selection">
+            <label for="country_code_select">Select Country:</label>
+            <select id="country_code_select" name="country_code_select">
+                <option value="">Loading countries...</option>
+            </select>
+            <button id="show-packages-btn">Show Packages</button>
+        </div>
+        <div id="product-list-container">
+            <!-- Products will be loaded here by JS, static preview can be empty or have a placeholder -->
+            <p>Product packages will be displayed here.</p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Roamstop. All rights reserved.</p>
+    </footer>
+    <script src="../static/js/api.js"></script>
+    <script src="../static/js/main.js"></script>
+</body>
+</html>
